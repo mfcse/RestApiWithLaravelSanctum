@@ -22,11 +22,17 @@ class AuthController extends Controller
             'password' => bcrypt($fields['password'])
         ]);
         $token = $user->createToken('myAppToken')->plainTextToken;
+        // $response = [
+        //     'user' => $user,
+        //     'token' => $token
+        // ];
+        // return response($response, 201);
         $response = [
-            'user' => $user,
-            'token' => $token
+            'success' => true,
+            'message' => 'User Created Successfully',
+            'data' => [$user, $token]
         ];
-        return response($response, 201);
+        return response()->json($response, 201);
     }
 
     public function login(Request $request)
@@ -39,24 +45,47 @@ class AuthController extends Controller
         $user = User::where('email', $fields['email'])->first();
         if (!auth()->attempt($credentials)) {
             //if (!$user || !Hash::check($fields['password'], $user->password)) {
-            return response([
-                'message' => 'Bad Login attempt'
-            ], 401);
-        }
-        $token = $user->createToken('myAppToken')->plainTextToken;
-        $response = [
-            'message' => 'Logged In',
-            'user' => $user,
-            'token' => $token
-        ];
-        return response($response, 201);
-    }
+            // return response([
+            //     'message' => 'Bad Login attempt'
+            // ], 401);
 
+            //follow convention of rest api
+            $response = [
+                'error' => true,
+                'message' => 'Bad Login Attempt',
+                'data' => []
+            ];
+            return response()->json($response, 401);
+        }
+
+        $token = $user->createToken('myAppToken')->plainTextToken;
+        //     $response = [
+        //         'message' => 'Logged In',
+        //         'user' => $user,
+        //         'token' => $token
+        //     ];
+        //     return response($response, 201);
+        // }
+        $response = [
+            'success' => true,
+            'message' => 'Logged In',
+            'data' => [$user, $token]
+        ];
+        return response()->json($response, 201);
+    }
     public function logout()
     {
         auth()->user()->tokens()->delete();
-        return [
-            'message' => 'Logged Out'
+        // return [
+        //     'message' => 'Logged Out'
+        // ];
+
+        //rest api convention
+        $response = [
+            'success' => true,
+            'message' => 'Logged Out',
+            'data' => []
         ];
+        return response()->json($response, 200);
     }
 }

@@ -14,7 +14,15 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Product::all();
+        //rest api convention
+        $response = [
+            'success' => true,
+            'message' => 'All Products',
+            'data' => Product::all()
+        ];
+        return response()->json($response, 200);
+
+        //return Product::all();
     }
 
     /**
@@ -30,7 +38,15 @@ class ProductController extends Controller
             'slug' => 'required',
             'price' => 'required'
         ]);
-        return Product::create($request->all());
+        //return Product::create($request->all());
+
+        //rest api convention
+        $response = [
+            'success' => true,
+            'message' => 'Product Stored',
+            'data' => Product::create($request->all())
+        ];
+        return response()->json($response, 200);
     }
 
     /**
@@ -41,7 +57,15 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        return Product::find($id);
+        // return Product::find($id);
+
+        //rest api convention
+        $response = [
+            'success' => true,
+            'message' => 'Single Product Information',
+            'data' => Product::find($id)
+        ];
+        return response()->json($response, 200);
     }
 
     /**
@@ -55,7 +79,16 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         $product->update($request->all());
-        return $product;
+
+        //return $product;
+
+        //rest api convention
+        $response = [
+            'success' => true,
+            'message' => 'Product Updated',
+            'data' => $product
+        ];
+        return response()->json($response, 200);
     }
 
     /**
@@ -66,7 +99,15 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        return Product::destroy($id);
+        //return Product::destroy($id);
+
+        //rest api convention
+        $response = [
+            'success' => true,
+            'message' => 'Product Deleted',
+            'data' => Product::destroy($id)
+        ];
+        return response()->json($response, 200);
     }
     /**
      * Search for a name
@@ -76,6 +117,14 @@ class ProductController extends Controller
      */
     public function search($name)
     {
-        return Product::where('name', 'like', '%' . $name . '%')->get();
+        $product = Product::where('name', 'like', '%' . $name . '%')->get();
+
+        //rest api convention
+        $response = [
+            'success' => true,
+            'message' => (!empty($product)) ? 'Product Found' : 'Product Not found',
+            'data' => Product::where('name', 'like', '%' . $name . '%')->get()
+        ];
+        return response()->json($response, 200);
     }
 }
